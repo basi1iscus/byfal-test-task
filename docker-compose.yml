@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+  controller:
+    build:
+      target: priceloader-controller
+      context: ./controller
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 8080:8080
+  worker:
+    environment:
+      WS_URL: ws://controller:8080
+      DATABASE_URL: postgresql://postgres:postgres@postgresql:5432/binance?schema=public
+    build:
+      target: priceloader-worker
+      context: ./price_worker
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - postgresql
+      - redis
+      - controller
+    deploy:
+      mode: replicated
+      replicas: 5
+  postgresql:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  redis:
+    image: redis:alpine
+    restart: always
+
