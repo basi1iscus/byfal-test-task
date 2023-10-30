@@ -1,2 +1,4 @@
 controller/node_modules
+controller/build
 price_worker/node_modules
+price_worker/build

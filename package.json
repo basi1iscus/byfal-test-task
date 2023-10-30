@@ -1,11 +1,13 @@
 {
-  "name": "price_worker",
+  "name": "binance_price_writer",
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "start": "npx prisma db push && node ./build/index.js",
-    "build": "tsc",
+    "install": "cd controller/ && npm install && cd ../price_worker && npm install",
+    "start:controller": "cd controller/ && npm start",
+    "start:worker": "cd price_worker/ && npm start",
+    "build": "cd controller/ && npm run build && cd ../price_worker && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

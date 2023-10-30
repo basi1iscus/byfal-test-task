@@ -1,11 +1,21 @@
 import WebSocket from 'ws';
 import { Command } from './interface';
 import { Worker } from './worker';
+import { ConsoleWriter } from './DAL/consoleWriter';
+import { RedisWriter } from './DAL/redisWriter';
+import { PrismaWriter } from './DAL/prismaWriter';
 
 const worker = new Worker();
+worker.registerObserver(new ConsoleWriter());
+const redisWriter = new RedisWriter();
+redisWriter.connect().then(() => worker.registerObserver(redisWriter));
+worker.registerObserver(new PrismaWriter());
 
-const ws = new WebSocket('ws://localhost:8080/');
-ws.on('error', console.error);
+const ws = new WebSocket(process.env.WS_URL || 'ws://localhost:8080/');
+ws.on('error', (err: any) => {
+  console.error(err);
+});
+
 
 ws.on('open', function open() {
   console.log('connected');
